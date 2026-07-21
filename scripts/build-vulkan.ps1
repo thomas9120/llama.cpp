@@ -41,8 +41,15 @@ function Set-VulkanSdk {
         return
     }
 
-    $sdkRoot = Join-Path $env:ProgramFiles "VulkanSDK"
-    if (Test-Path $sdkRoot) {
+    $sdkRoots = @(
+        "C:\VulkanSDK",
+        (Join-Path $env:ProgramFiles "VulkanSDK")
+    )
+    foreach ($sdkRoot in $sdkRoots) {
+        if (-not (Test-Path $sdkRoot)) {
+            continue
+        }
+
         $sdk = Get-ChildItem $sdkRoot -Directory |
             Sort-Object { [version]($_.Name -replace '[^0-9.].*$', '') } -Descending |
             Select-Object -First 1
